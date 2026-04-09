@@ -55,6 +55,60 @@ Due to the inherent scale and sign ambiguity of ICA, we use **Cross-Correlation 
 * *Note: Minor variances are expected due to hardware-specific floating-point truncation and random initialization.*
 
 ---
+## 📊 Performance Benchmarks
+
+We conducted comprehensive benchmarks on typical EEG data scales using the following configurations:
+
+```python
+configs = [
+    (1, 32, 10000),   # small batch, long sequence
+    (1, 64, 50000),   # standard 64-channel, long sequence
+    (4, 64, 20000),
+    (8, 128, 10000),
+    (16, 64, 50000),  # larger batch
+]
+
+### FIR Filter
+```markdown
+|   batch |   channels |   time_steps |   CUDA (ms) |   PyTorch (ms) |   SciPy (ms) | vs PyTorch   | vs SciPy   |
+|--------:|-----------:|-------------:|------------:|---------------:|-------------:|:-------------|:-----------|
+|       1 |         32 |        10000 |        0.3  |           0.55 |        12.43 | 1.8x         | 41.7x      |
+|       1 |         64 |        50000 |        2.84 |           4.84 |       116.87 | 1.7x         | 41.2x      |
+|       4 |         64 |        20000 |        3.61 |           5.94 |        46.96 | 1.6x         | 13.0x      |
+|       8 |        128 |        10000 |        7.4  |          11.88 |        46.63 | 1.6x         | 6.3x       |
+|      16 |         64 |        50000 |       37.45 |          59.65 |       114.92 | 1.6x         | 3.1x       |
+
+### Centering
+```markdown
+|   batch |   channels |   time_steps |   CUDA (ms) |   PyTorch (ms) |   NumPy (ms) | vs PyTorch   | vs NumPy   |
+|--------:|-----------:|-------------:|------------:|---------------:|-------------:|:-------------|:-----------|
+|       1 |         32 |        10000 |        0.04 |           0.04 |         0.48 | 0.8x         | 10.6x      |
+|       1 |         64 |        50000 |        0.39 |           0.22 |         5.97 | 0.6x         | 15.2x      |
+|       4 |         64 |        20000 |        0.57 |           0.35 |         2.99 | 0.6x         | 5.2x       |
+|       8 |        128 |        10000 |        1.17 |           0.68 |         2.76 | 0.6x         | 2.4x       |
+|      16 |         64 |        50000 |        5.65 |           3.31 |         8.5  | 0.6x         | 1.5x       |
+
+### Whitening
+```markdown
+|   batch |   channels |   time_steps |   CUDA (ms) |   PyTorch (ms) |   NumPy (ms) | vs PyTorch   | vs NumPy   |
+|--------:|-----------:|-------------:|------------:|---------------:|-------------:|:-------------|:-----------|
+|       1 |         32 |        10000 |        3.46 |           2.43 |        12.49 | 0.7x         | 3.6x       |
+|       1 |         64 |        50000 |       14.64 |           3.93 |       138.35 | 0.3x         | 9.5x       |
+|       4 |         64 |        20000 |       32.51 |          10.86 |        80.74 | 0.3x         | 2.5x       |
+|       8 |        128 |        10000 |      120.39 |          29.15 |        21.65 | 0.2x         | 0.2x       |
+|      16 |         64 |        50000 |      171.5  |          29.08 |        17.72 | 0.2x         | 0.1x       |
+
+### FastICA
+```markdown
+|   batch |   channels |   time_steps |   CUDA (ms) |   sklearn (ms) | vs sklearn   |
+|--------:|-----------:|-------------:|------------:|---------------:|:-------------|
+|       1 |         32 |        10000 |      300.15 |         612.03 | 2.0x         |
+|       1 |         64 |        50000 |      548.11 |        4925.6  | 9.0x         |
+|       4 |         64 |        20000 |     1798.81 |        2031.58 | 1.1x         |
+|       8 |        128 |        10000 |     4701.17 |        4386.61 | 0.9x         |
+|      16 |         64 |        50000 |     7883.38 |        4424.04 | 0.6x         |
+
+---
 
 ## 🏗 Installation
 ```bash
