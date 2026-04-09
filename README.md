@@ -111,10 +111,25 @@ configs = [
 ```
 ---
 
-## 🏗 Installation
+## Requirements
+
+- Python ≥ 3.8
+- PyTorch 2.6.0+cu124 (with CUDA 12.4)
+- CUDA Toolkit 12.4 (matching the PyTorch build)
+- NVIDIA GPU with compute capability ≥ 7.0 (recommended)
+
+This extension was built and tested with:
+- PyTorch 2.6.0+cu124
+- Built using: `pip install -e . --no-build-isolation`
+
+## Installation
+
+### From Source (Recommended for latest features)
+
 ```bash
-git clone [https://github.com/YourUsername/EEG_CUDA.git](https://github.com/YourUsername/EEG_CUDA.git)
-mkdir build && cd build
-cmake ..
-make
+git clone https://github.com/643591947/eeg_cuda_ops.git
+cd eeg_cuda_ops
+
+# Install in editable mode (recommended for development)
+pip install -e . --no-build-isolation
 ```
