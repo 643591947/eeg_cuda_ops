@@ -108,6 +108,7 @@ configs = [
 |       8 |        128 |        10000 |     4701.17 |        4386.61 | 0.9x         |
 |      16 |         64 |        50000 |     7883.38 |        4424.04 | 0.6x         |
 
+```
 ---
 
 ## 🏗 Installation
@@ -116,3 +117,4 @@ git clone [https://github.com/YourUsername/EEG_CUDA.git](https://github.com/Your
 mkdir build && cd build
 cmake ..
 make
+```
