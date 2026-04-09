@@ -1,0 +1,11 @@
+EEG CUDA FastICA Verification Report
+============================================================
+Data dimensions: 62 channels × 111000 time points
+CUDA output precision: torch.float32
+
+[Verification A] Mean maximum correlation: 0.900836
+[Verification A] Minimum correlation: 0.499077
+[Verification A] High-match components: 40 / 62
+
+Conclusion: CUDA FastICA numerically aligned with scikit-learn baseline
+============================================================
