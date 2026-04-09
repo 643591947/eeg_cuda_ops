@@ -1,4 +1,5 @@
-<image-card alt="EEG CUDA Ops" src="images/banner.jpg" ></image-card>
+<image-card alt="EEG CUDA Ops" src="./images/banner.jpg" ></image-card>
+
 # EEG_CUDA: High-Performance EEG Signal Processing Accelerators
 
 [ English | [Chinese](./README_zh.md) ]
