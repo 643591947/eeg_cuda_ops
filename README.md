@@ -62,9 +62,9 @@ Conclusion: CUDA operator numerically aligned with NumPy baseline
 Data dimensions: 62 channels × 111000 time points
 CUDA output precision: torch.float32
 
-[Verification A] Mean maximum correlation: 0.900836
-[Verification A] Minimum correlation: 0.499077
-[Verification A] High-match components: 40 / 62
+- [Verification A] Mean maximum correlation: 0.900836
+- [Verification A] Minimum correlation: 0.499077
+- [Verification A] High-match components: 40 / 62
 
 Conclusion: CUDA FastICA numerically aligned with scikit-learn baseline
 * *Note: Minor variances are expected due to hardware-specific floating-point truncation and random initialization.*
