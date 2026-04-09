@@ -1,6 +1,6 @@
 # EEG_CUDA: High-Performance EEG Signal Processing Accelerators
 
-[ [English] | [简体中文](./README_zh.md) ]
+ [English] | [Chinese](./README_zh.md) 
 
 EEG_CUDA is a high-performance library designed for Electroencephalogram (EEG) signal processing. By leveraging NVIDIA CUDA, this project accelerates critical algorithms for long-sequence and multi-channel data while maintaining high numerical stability.
 
