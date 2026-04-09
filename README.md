@@ -1,4 +1,4 @@
-[English](./README.md) | [简体中文](./README_zh.md)
+[English](./README_en.md) | [简体中文](./README.md)
 ------
 
 # 脑电信号 (EEG) 处理 CUDA 加速算法说明文档
