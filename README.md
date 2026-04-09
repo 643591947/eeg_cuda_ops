@@ -38,21 +38,38 @@ EEG_CUDA is a high-performance library designed for Electroencephalogram (EEG) s
 
 ---
 
-## 📊 Validation & Benchmarks
+## Numerical Verification
+### EEG CUDA Whitening Operator Alignment Verification Report
+============================================================
+Data dimensions: 62 channels × 111000 time points
+CUDA output precision: torch.float32
 
-We use a "Pure Variable Isolation" strategy to verify CUDA kernels against standard CPU implementations (NumPy/Scikit-learn).
+[Verification A] Covariance max absolute deviation: 7.15730457e-08
+[Verification A] Covariance mean absolute deviation: 1.44945808e-09
+[Verification A] Covariance max relative deviation: 2.98989602e-03
 
-### Precision Results (ZCA)
-| Metric | Max Absolute Error | Status |
-| :--- | :--- | :--- |
-| **Covariance Alignment** | $< 10^{-7}$ | ✅ Passed |
-| **Data Tensor Alignment** | $< 10^{-6}$ | ✅ Passed |
+[Verification B] Data point max absolute error: 4.73091882e-07
+[Verification B] Data point mean absolute error: 1.86681251e-08
+[Verification B] Data point max relative error: 1.86003727e-02
 
-### Separation Fidelity (FastICA)
-Due to the inherent scale and sign ambiguity of ICA, we use **Cross-Correlation Matrix** analysis:
-* **Mean Max Correlation:** **0.909** (Highly consistent with Scikit-learn).
-* **Matched Components:** **41 / 62** channels achieved high-fidelity matching.
+[Extra Check] CUDA → Identity max deviation: 5.96205048e-01
+[Extra Check] NumPy → Identity max deviation: 5.96205054e-01
+
+Conclusion: CUDA operator numerically aligned with NumPy baseline
+============================================================
+
+### EEG CUDA FastICA Verification Report
+============================================================
+Data dimensions: 62 channels × 111000 time points
+CUDA output precision: torch.float32
+
+[Verification A] Mean maximum correlation: 0.900836
+[Verification A] Minimum correlation: 0.499077
+[Verification A] High-match components: 40 / 62
+
+Conclusion: CUDA FastICA numerically aligned with scikit-learn baseline
 * *Note: Minor variances are expected due to hardware-specific floating-point truncation and random initialization.*
+============================================================
 
 ---
 ## 📊 Performance Benchmarks
