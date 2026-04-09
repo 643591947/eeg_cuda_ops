@@ -39,8 +39,8 @@ EEG_CUDA is a high-performance library designed for Electroencephalogram (EEG) s
 ---
 
 ## Numerical Verification
+
 ### EEG CUDA Whitening Operator Alignment Verification Report
-============================================================
 Data dimensions: 62 channels × 111000 time points
 CUDA output precision: torch.float32
 
@@ -56,10 +56,9 @@ CUDA output precision: torch.float32
 [Extra Check] NumPy → Identity max deviation: 5.96205054e-01
 
 Conclusion: CUDA operator numerically aligned with NumPy baseline
-============================================================
+
 
 ### EEG CUDA FastICA Verification Report
-============================================================
 Data dimensions: 62 channels × 111000 time points
 CUDA output precision: torch.float32
 
@@ -69,7 +68,6 @@ CUDA output precision: torch.float32
 
 Conclusion: CUDA FastICA numerically aligned with scikit-learn baseline
 * *Note: Minor variances are expected due to hardware-specific floating-point truncation and random initialization.*
-============================================================
 
 ---
 ## 📊 Performance Benchmarks
