@@ -36,5 +36,3 @@ FIR taps: 256, Cutoff: 1-40Hz
 
 [Vs PyTorch] Max Abs: 4.47034836e-08  Mean Abs: 3.40059092e-09
 [Vs PyTorch] Max Rel: 2.61072797e-04  Mean Rel: 3.47849010e-07
-
-Conclusion: PASS
