@@ -10,7 +10,7 @@ import torch.nn.functional as F
 # ==========================================
 # 1. 数据加载与预处理
 # ==========================================
-input_dir = r"E:\bizq\脑电分析\EEG测试数据\Copy_20260130175721005\赵婷\赵婷_20260130_173432\1\1\data.bdf"  # ← 请根据实际路径修改
+input_dir = r""
 print(f"正在加载数据: {input_dir}")
 
 # 防御性路径校验
@@ -75,14 +75,13 @@ with torch.no_grad():
     pad = (kernel_size - 1, 0)
     x_padded = F.pad(eeg_tensor, pad, mode='constant', value=0.0)  # (B, C, T + kernel_size-1)
 
-    # weights 需要 reshape 为 conv1d 格式: (out_channels=1, in_channels=1, kernel_size) 但这里是 per-channel 独立
-    # 因为是相同 weights 应用于每个通道，我们用 groups=C
+    # weights 需要 reshape 为 conv1d 格式: (out_channels=1, in_channels=1, kernel_size)
     weights_reshaped = weights_tensor.view(1, 1, kernel_size).repeat(eeg_tensor.shape[1], 1, 1)  # (C, 1, K)
 
     pytorch_filtered = F.conv1d(
         x_padded,
         weight=weights_reshaped,
-        groups=eeg_tensor.shape[1],  # 每个通道独立卷积
+        groups=eeg_tensor.shape[1],
         padding=0,
         stride=1
     )  # 输出形状应与输入相同 (B, C, T)
