@@ -1,5 +1,3 @@
----
-
 ## 🚀 Key Algorithms
 
 ### 1. FIR Filter
@@ -29,6 +27,3 @@
 * **Purpose:** Blind Source Separation (BSS). Extracts independent brain sources and removes artifacts like EOG and ECG.
 * **Core Logic:** Maximizes non-Gaussianity using the Fixed-point iteration (Fixed-point algorithm).
 * **Orthogonalization:** Symmetric orthogonalization ($W = (WW^T)^{-1/2}W$) to prevent component convergence overlap.
-
----
-
