@@ -11,7 +11,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"🚀 使用设备: {device}")
 print(f"PyTorch 版本: {torch.__version__}\n")
 
-
 def time_func(fn, *args, warmup=5, runs=20):
     """精确计时（warmup + 同步）"""
     for _ in range(warmup):

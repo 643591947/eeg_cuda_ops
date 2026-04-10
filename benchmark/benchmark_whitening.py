@@ -29,45 +29,53 @@ def benchmark_whitening(batch, channels, time_steps):
     # 随机生成 EEG 数据
     x = torch.randn(batch, channels, time_steps, device=device, dtype=torch.float32)
 
+    torch.cuda.synchronize()
+    x_centered = eeg_cuda.centering(x)
+    torch.cuda.synchronize()
+
     # 1. 你的 CUDA 实现
     def cuda_whitening():
-        return eeg_cuda.whitening(x)  # ← 核心调用
+        return eeg_cuda.whitening(x_centered)
 
     t_cuda = time_func(cuda_whitening)
 
-    # 2. PyTorch 原生 ZCA 白化 baseline
+    # 2. PyTorch 原生 ZCA 白化 baseline (对齐你 C++ 里的数学逻辑)
     def torch_whitening():
-        B, C, T = x.shape
-        # Center
-        mean = x.mean(dim=-1, keepdim=True)
-        x_c = x - mean
-        # Covariance [B, C, C]
-        cov = torch.bmm(x_c, x_c.transpose(-2, -1)) / (T - 1 + 1e-6)
-        # Eigen decomposition
+        cov = torch.bmm(x_centered, x_centered.transpose(-2, -1)) / (time_steps - 1)
+
+        # 特征值分解
         eigvals, eigvecs = torch.linalg.eigh(cov)
+
         # ZCA scaling
-        eps = 1e-6
-        scale = 1.0 / torch.sqrt(eigvals + eps)
+        max_eig = eigvals.abs().max(dim=-1, keepdim=True)[0]
+        eps = max_eig * 1e-6
+        D_inv_sqrt = torch.maximum(eigvals.abs(), eps).pow(-0.5)
+
         # Whitening matrix W = V @ D^{-1/2} @ V^T
-        W = torch.bmm(eigvecs, scale.unsqueeze(-1) * eigvecs.transpose(-2, -1))
-        # Apply
-        return torch.bmm(W, x_c)
+        W = torch.bmm(eigvecs, D_inv_sqrt.unsqueeze(-1) * eigvecs.transpose(-2, -1))
+
+        # Apply ZCA
+        return torch.bmm(W, x_centered)
 
     t_torch = time_func(torch_whitening)
 
     # 3. NumPy CPU baseline（单 batch 公平对比）
-    x_cpu = x[0].cpu().numpy()  # shape (C, T)
+    x_c_cpu = x_centered[0].cpu().numpy()  # shape (C, T)
 
     def numpy_whitening():
-        C, T = x_cpu.shape
-        mean = x_cpu.mean(axis=-1, keepdims=True)
-        x_c = x_cpu - mean
-        cov = (x_c @ x_c.T) / (T - 1 + 1e-6)
+        C, T = x_c_cpu.shape
+        # 直接使用 x_c_cpu 算协方差
+        cov = (x_c_cpu @ x_c_cpu.T) / (T - 1)
+
         eigvals, eigvecs = np.linalg.eigh(cov)
-        eps = 1e-6
-        scale = 1.0 / np.sqrt(eigvals + eps)
-        W = eigvecs @ (scale[:, None] * eigvecs.T)
-        return W @ x_c
+
+        # 同样对齐数值逻辑
+        max_eig = np.max(np.abs(eigvals))
+        eps = max_eig * 1e-6
+        D_inv_sqrt = 1.0 / np.sqrt(np.maximum(np.abs(eigvals), eps))
+
+        W = eigvecs @ (D_inv_sqrt[:, None] * eigvecs.T)
+        return W @ x_c_cpu
 
     t_numpy = time_func(numpy_whitening, warmup=2, runs=5)
 
