@@ -42,21 +42,19 @@ EEG_CUDA is a high-performance library designed for Electroencephalogram (EEG) s
 ## Numerical Verification
 
 ### EEG CUDA Whitening Operator Alignment Verification Report
-Data dimensions: 62 channels × 111000 time points
+Data dimensions: Batch 10 × 62 channels × 111000 time points
 CUDA output precision: torch.float32
 
-- [Verification A] Covariance max absolute deviation: 7.15730457e-08
-- [Verification A] Covariance mean absolute deviation: 1.44945808e-09
-- [Verification A] Covariance max relative deviation: 2.98989602e-03
+[Verification A] Covariance max absolute deviation: 5.03196036e-06
+[Verification A] Covariance mean absolute deviation: 4.51245319e-07
+[Verification A] Covariance max relative deviation: 1.13689825e-01
 
-- [Verification B] Data point max absolute error: 4.73091882e-07
-- [Verification B] Data point mean absolute error: 1.86681251e-08
-- [Verification B] Data point max relative error: 1.86003727e-02
+[Verification B] Data point max absolute error: 9.59396362e-04
+[Verification B] Data point mean absolute error: 1.41664771e-06
+[Verification B] Data point max relative error: 7.35398026e+01
 
-- [Extra Check] CUDA → Identity max deviation: 5.96205048e-01
-- [Extra Check] NumPy → Identity max deviation: 5.96205054e-01
-
-Conclusion: CUDA operator numerically aligned with NumPy baseline
+[Extra Check] CUDA → Identity max deviation: 1.81416576e+00
+[Extra Check] PyTorch → Identity max deviation: 1.81416596e+00
 
 
 ### EEG CUDA FastICA Verification Report
@@ -76,13 +74,6 @@ Conclusion: CUDA FastICA numerically aligned with scikit-learn baseline
 We conducted comprehensive benchmarks on typical EEG data scales using the following configurations:
 
 ```python
-configs = [
-    (1, 32, 10000),   # small batch, long sequence
-    (1, 64, 50000),   # standard 64-channel, long sequence
-    (4, 64, 20000),
-    (8, 128, 10000),
-    (16, 64, 50000),  # larger batch
-]
 
 ### FIR Filter
 ```markdown
@@ -98,38 +89,38 @@ configs = [
 ```markdown
 |   batch |   channels |   time_steps |   CUDA (ms) |   PyTorch (ms) |   NumPy (ms) | vs PyTorch   | vs NumPy   |
 |--------:|-----------:|-------------:|------------:|---------------:|-------------:|:-------------|:-----------|
-|       1 |         32 |        10000 |        0.04 |           0.04 |         0.48 | 0.8x         | 10.6x      |
-|       1 |         64 |        50000 |        0.39 |           0.22 |         5.97 | 0.6x         | 15.2x      |
-|       4 |         64 |        20000 |        0.57 |           0.35 |         2.99 | 0.6x         | 5.2x       |
-|       8 |        128 |        10000 |        1.17 |           0.68 |         2.76 | 0.6x         | 2.4x       |
-|      16 |         64 |        50000 |        5.65 |           3.31 |         8.5  | 0.6x         | 1.5x       |
+|       1 |         32 |        10000 |        0.02 |           0.04 |         0.41 | 2.1x         | 21.4x      |
+|       1 |         64 |        50000 |        0.21 |           0.22 |         5.82 | 1.1x         | 28.2x      |
+|       4 |         64 |        20000 |        0.32 |           0.34 |         2.64 | 1.1x         | 8.3x       |
+|       8 |        128 |        10000 |        0.45 |           0.68 |         2.92 | 1.5x         | 6.5x       |
+|      16 |         64 |        50000 |        3.19 |           3.3  |         5.96 | 1.0x         | 1.9x       |
 
 ### Whitening
 ```markdown
 |   batch |   channels |   time_steps |   CUDA (ms) |   PyTorch (ms) |   NumPy (ms) | vs PyTorch   | vs NumPy   |
 |--------:|-----------:|-------------:|------------:|---------------:|-------------:|:-------------|:-----------|
-|       1 |         32 |        10000 |        3.46 |           2.43 |        12.49 | 0.7x         | 3.6x       |
-|       1 |         64 |        50000 |       14.64 |           3.93 |       138.35 | 0.3x         | 9.5x       |
-|       4 |         64 |        20000 |       32.51 |          10.86 |        80.74 | 0.3x         | 2.5x       |
-|       8 |        128 |        10000 |      120.39 |          29.15 |        21.65 | 0.2x         | 0.2x       |
-|      16 |         64 |        50000 |      171.5  |          29.08 |        17.72 | 0.2x         | 0.1x       |
+|       1 |         32 |        10000 |        1.04 |           1.19 |         1.6  | 1.1x         | 1.5x       |
+|       1 |         64 |        50000 |        1.75 |           1.86 |        11.53 | 1.1x         | 6.6x       |
+|       4 |         64 |        20000 |        8.21 |           7.07 |         6.61 | 0.9x         | 0.8x       |
+|       8 |        128 |        10000 |       18.67 |          18.85 |        11.2  | 1.0x         | 0.6x       |
+|      16 |         64 |        50000 |       24.69 |          24.92 |        11.44 | 1.0x         | 0.5x       |
 
 ### FastICA
 ```markdown
 |   batch |   channels |   time_steps |   CUDA (ms) |   sklearn (ms) | vs sklearn   |
 |--------:|-----------:|-------------:|------------:|---------------:|:-------------|
-|       1 |         32 |        10000 |      300.15 |         612.03 | 2.0x         |
-|       1 |         64 |        50000 |      548.11 |        4925.6  | 9.0x         |
-|       4 |         64 |        20000 |     1798.81 |        2031.58 | 1.1x         |
-|       8 |        128 |        10000 |     4701.17 |        4386.61 | 0.9x         |
-|      16 |         64 |        50000 |     7883.38 |        4424.04 | 0.6x         |
+|       1 |         32 |        10000 |      279.02 |         647.97 | 2.3x         |
+|       1 |         64 |        50000 |      521.46 |        4178.58 | 8.0x         |
+|       4 |         64 |        20000 |     1745.98 |        1933.9  | 1.1x         |
+|       8 |        128 |        10000 |     4676.83 |        4372.91 | 0.9x         |
+|      16 |         64 |        50000 |     7782.68 |        4311.99 | 0.6x         |
 
 ```
 ---
 
 ## Requirements
 
-- Python ≥ 3.8
+- Python 3.11
 - PyTorch 2.6.0+cu124 (with CUDA 12.4)
 - CUDA Toolkit 12.4 (matching the PyTorch build)
 - NVIDIA GPU with compute capability ≥ 7.0 (recommended)
