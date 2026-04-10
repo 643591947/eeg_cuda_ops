@@ -1,0 +1,12 @@
+EEG CUDA FIR Filter Verification Report (Causal)
+======================================================================
+Data shape: Batch 10 × Channels 62 × Time 111000
+FIR taps: 256, Cutoff: 1-40Hz
+
+[Vs SciPy] Max Abs: 2.98023224e-08  Mean Abs: 2.42506304e-09
+[Vs SciPy] Max Rel: 1.22216647e-04  Mean Rel: 2.47929279e-07
+
+[Vs PyTorch] Max Abs: 4.47034836e-08  Mean Abs: 3.40059092e-09
+[Vs PyTorch] Max Rel: 2.61072797e-04  Mean Rel: 3.47849010e-07
+
+Conclusion: PASS
