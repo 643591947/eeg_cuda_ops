@@ -1,18 +1,16 @@
 EEG CUDA Whitening Operator Alignment Verification Report
 ============================================================
-Data dimensions: 62 channels × 111000 time points
+Data dimensions: Batch 10 × 62 channels × 111000 time points
 CUDA output precision: torch.float32
 
-[Verification A] Covariance max absolute deviation: 7.15730457e-08
-[Verification A] Covariance mean absolute deviation: 1.44945808e-09
-[Verification A] Covariance max relative deviation: 2.98989602e-03
+[Verification A] Covariance max absolute deviation: 5.03196036e-06
+[Verification A] Covariance mean absolute deviation: 4.51245319e-07
+[Verification A] Covariance max relative deviation: 1.13689825e-01
 
-[Verification B] Data point max absolute error: 4.73091882e-07
-[Verification B] Data point mean absolute error: 1.86681251e-08
-[Verification B] Data point max relative error: 1.86003727e-02
+[Verification B] Data point max absolute error: 9.59396362e-04
+[Verification B] Data point mean absolute error: 1.41664771e-06
+[Verification B] Data point max relative error: 7.35398026e+01
 
-[Extra Check] CUDA → Identity max deviation: 5.96205048e-01
-[Extra Check] NumPy → Identity max deviation: 5.96205054e-01
+[Extra Check] CUDA → Identity max deviation: 1.81416576e+00
+[Extra Check] PyTorch → Identity max deviation: 1.81416596e+00
 
-Conclusion: CUDA operator numerically aligned with NumPy baseline
-============================================================

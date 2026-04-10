@@ -77,7 +77,7 @@ else:
 print("-" * 60 + "\n")
 
 # Save verification report
-report_path = "cuda_fastica_verification.log"
+report_path = "../V0_1_0verification/cuda_fastica_verification.log"
 with open(report_path, "w", encoding="utf-8") as f:
     f.write("EEG CUDA FastICA Verification Report\n")
     f.write("="*60 + "\n")
