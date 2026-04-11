@@ -41,7 +41,7 @@ FIR taps: 256, Cutoff: 1-40Hz
 
 ### EEG CUDA IIR filtfilt Verification Report
 Data shape: Batch 10 × Channels 64 × Time 1000
-Filter type: high, Cutoff: [1]Hz
+Filter type: high, Cutoff: [1]Hz 
 
 [Vs Exact Equivalent] Max Abs Error: 5.19752502e-05
 
