@@ -5,16 +5,17 @@ from torch.utils.cpp_extension import BuildExtension, CUDAExtension
 
 setup(
     name='eeg_cuda',
-    version='0.1.0',
+    version='0.1.1',
     ext_modules=[
         CUDAExtension(
             name='eeg_cuda',
             sources=[
                 'csrc/extension.cpp',
-                'csrc/filter_kernel.cu',
-                'csrc/centering_kernel.cu',
+                'csrc/fir_filter.cu',
+                'csrc/centering.cu',
                 'csrc/whitening.cu',
-                'csrc/fastica.cu'
+                'csrc/fastica.cu',
+                'csrc/iir_filtfilt_filter.cu',
             ]
         )
     ],
