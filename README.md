@@ -69,11 +69,6 @@ See [numerical_verification.md](docs/numerical_verification.md) for verification
 - CUDA Toolkit 12.4 (matching the PyTorch build)
 - NVIDIA GPU with compute capability ≥ 7.0 (recommended)
 
-This extension was built and tested with:
-- PyTorch 2.6.0+cu124
-- Built using: `pip install -e . --no-build-isolation`
-
-
 ## 🛠 Installation & Setup
 Follow these steps to set up the environment and build the CUDA extensions.
 
