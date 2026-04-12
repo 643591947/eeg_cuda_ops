@@ -64,7 +64,7 @@ Note : Full Batch Fair Comparison
 |      16 |         64 |        50000 |     7782.68 |        4311.99 | 0.6x         |
 
 ```
-See `docs/numerical_verification.md` for verification reports.
+See [numerical_verification.md](docs/numerical_verification.md) for verification reports.
 ---
 
 ## Requirements
