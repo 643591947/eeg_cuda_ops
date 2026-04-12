@@ -5,7 +5,7 @@
 
 EEG_CUDA is a high-performance library designed for Electroencephalogram (EEG) signal processing. By leveraging NVIDIA CUDA, this project accelerates critical algorithms for long-sequence and multi-channel data while maintaining high numerical stability.
 
-See `docs/math.md` for mathematical details.
+See [math.md](docs/math.md) for mathematical details.
 ---
 ## 📊 Performance Benchmarks
 
@@ -64,7 +64,7 @@ Note : Full Batch Fair Comparison
 |      16 |         64 |        50000 |     7782.68 |        4311.99 | 0.6x         |
 
 ```
-See `docs/numerical_verification.md` for verification reports.
+See [numerical_verification.md](docs/numerical_verification.md) for verification reports.
 ---
 
 ## Requirements
