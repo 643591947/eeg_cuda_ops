@@ -41,9 +41,9 @@ H(s) = \frac{1}{s^2 + \sqrt{2}\ s + 1}
 $$
 
 1. **Pre-warping**  
-   $$
-   \Omega = \tan\left(\pi \cdot \frac{f_c}{f_s}\right)
-   $$
+$$
+\Omega = \tan\left(\pi \cdot \frac{f_c}{f_s}\right)
+$$
 
 2. **Bilinear Transform**  
    Convert the analog transfer function to the digital domain to obtain the biquad coefficients $(b_0, b_1, b_2, a_1, a_2)$ (with $a_0 = 1$).
@@ -52,8 +52,12 @@ High-pass, band-pass, and band-stop filters are obtained by first applying analo
 
 #### Traditional Recursive Form (Direct Form II)
 
-Once the coefficients are determined, the filter can be expressed by the following difference equations:
+The direct difference equation of the second-order IIR filter is:
+$$
+y[n] = \frac{1}{a_0} \Bigl( b_0 x[n] + b_1 x[n-1] + b_2 x[n-2] - a_1 y[n-1] - a_2 y[n-2] \Bigr)
+$$
 
+An equivalent and commonly used implementation is the **Direct Form II** structure with intermediate state variable $w[n]$:
 $$
 \begin{aligned}
 w[n] &= x[n] - a_1 w[n-1] - a_2 w[n-2] \\
