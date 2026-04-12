@@ -18,12 +18,12 @@
 
 #define THREADS_PER_BLOCK 256
 // Omega
-float Omega(float sfre, float cfre) {
+static float Omega(float sfre, float cfre) {
     return tanf(M_PI * cfre / sfre);
 }
 
 // a b computation
-std::pair<std::vector<float>, std::vector<float>> a_b(
+static std::pair<std::vector<float>, std::vector<float>> a_b(
     torch::Tensor sfre,
     torch::Tensor cfre,
     const std::string& pass,   // 'low' or 'high'
@@ -177,7 +177,7 @@ __global__ void iir_extract_output_kernel(
 }
 
 // forward
-torch::Tensor run_iir_filter_forward(
+static torch::Tensor run_iir_filter_forward(
     torch::Tensor input,
     torch::Tensor sfre,
     torch::Tensor cfre,
@@ -254,7 +254,7 @@ torch::Tensor run_iir_filter_forward(
 }
 
 // main
-torch::Tensor run_iir_filtfilt(
+torch::Tensor run_iir_filtfilt_matrix(
     torch::Tensor input,
     torch::Tensor sfre,
     torch::Tensor cfre,

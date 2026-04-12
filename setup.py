@@ -15,7 +15,8 @@ setup(
                 'csrc/centering.cu',
                 'csrc/whitening.cu',
                 'csrc/fastica.cu',
-                'csrc/iir_filtfilt_filter.cu',
+                'csrc/iir_filtfilt_filter_matrix.cu',
+                'csrc/iir_filtfilt_filter_norm.cu'
             ]
         )
     ],
