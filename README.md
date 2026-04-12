@@ -73,14 +73,29 @@ This extension was built and tested with:
 - PyTorch 2.6.0+cu124
 - Built using: `pip install -e . --no-build-isolation`
 
-## Installation
 
-### From Source (Recommended for latest features)
+## 🛠 Installation & Setup
+Follow these steps to set up the environment and build the CUDA extensions.
 
+1. Clone the Repository
 ```bash
-git clone https://github.com/643591947/eeg_cuda_ops.git
+git clone [https://github.com/643591947/eeg_cuda_ops.git](https://github.com/643591947/eeg_cuda_ops.git)
 cd eeg_cuda_ops
+```
 
-# Install in editable mode (recommended for development)
+2. Install Dependencies
+It is recommended to use a virtual environment (venv or conda).
+```bash
+pip install -r requirements.txt
+```
+
+3. Build CUDA Extensions
+```bash
 pip install -e . --no-build-isolation
+```
+
+4. Running the Visualization UI
+```bash
+cd web_UI
+streamlit run main.py
 ```
