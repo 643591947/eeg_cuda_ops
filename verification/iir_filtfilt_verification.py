@@ -49,7 +49,7 @@ def get_biquad_coeffs(sfre, cfre, pass_type="high", bandstop=False):
 # ==========================================
 # 1. 数据加载与预处理
 # ==========================================
-input_dir = r""  # 填入你的测试数据路径
+input_dir = r""
 print(f"正在加载数据: {input_dir}")
 
 if not os.path.exists(input_dir) and input_dir != "":

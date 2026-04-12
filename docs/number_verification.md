@@ -43,8 +43,8 @@ FIR taps: 256, Cutoff: 1-40Hz
 Data shape: Batch 10 × Channels 64 × Time 1000
 Filter type: high, Cutoff: [1]Hz
 
-[Vs Exact Equivalent] Max Abs Error: 5.19752502e-05
+[Vs Exact Equivalent] Max Abs Error: 6.58165663e-06
 
-[Vs Exact Equivalent] Mean Abs Error: 1.06602092e-05
+[Vs Exact Equivalent] Mean Abs Error: 2.04179813e-07
 
-[Vs Standard filtfilt] Max Abs Error (Boundary Effects Expected): 3.74964452e+00
+[Vs Standard filtfilt] Max Abs Error (Boundary Effects Expected): 1.48602361e-02
