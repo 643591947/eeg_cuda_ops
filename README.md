@@ -11,9 +11,8 @@ See [math.md](docs/math.md) for mathematical details.
 
 We conducted comprehensive benchmarks on typical EEG data scales using the following configurations:
 
-```python
-### FIR Filter
 ```markdown
+### FIR Filter
 |   batch |   channels |   time_steps |   CUDA (ms) |   PyTorch (ms) |   SciPy (ms) | vs PyTorch   | vs SciPy   |
 |--------:|-----------:|-------------:|------------:|---------------:|-------------:|:-------------|:-----------|
 |       1 |         32 |        10000 |        0.3  |           0.55 |        12.43 | 1.8x         | 41.7x      |
@@ -23,7 +22,6 @@ We conducted comprehensive benchmarks on typical EEG data scales using the follo
 |      16 |         64 |        50000 |       37.45 |          59.65 |       114.92 | 1.6x         | 3.1x       |
 
 ### IIR Filtfilt Filter
-```markdown
 Note : Full Batch Fair Comparison
 |   batch |   channels |   time_steps |   CUDA Matrix (ms) |   CUDA Norm (ms) |   PyTorch (ms) |   SciPy (ms) | Matrix vs PyTorch   | Norm vs PyTorch   | Matrix vs SciPy   | Norm vs SciPy   |   Matrix-Norm diff |
 |--------:|-----------:|-------------:|-------------------:|-----------------:|---------------:|-------------:|:--------------------|:------------------|:------------------|:----------------|-------------------:|
@@ -34,7 +32,6 @@ Note : Full Batch Fair Comparison
 |      16 |         64 |        50000 |             606.51 |            36.46 |          70    |       663.91 | 0.1x                | 1.9x              | 1.1x              | 18.2x           |           0.000145 |
 
 ### Centering
-```markdown
 |   batch |   channels |   time_steps |   CUDA (ms) |   PyTorch (ms) |   NumPy (ms) | vs PyTorch   | vs NumPy   |
 |--------:|-----------:|-------------:|------------:|---------------:|-------------:|:-------------|:-----------|
 |       1 |         32 |        10000 |        0.02 |           0.04 |         0.41 | 2.1x         | 21.4x      |
@@ -44,7 +41,6 @@ Note : Full Batch Fair Comparison
 |      16 |         64 |        50000 |        3.19 |           3.3  |         5.96 | 1.0x         | 1.9x       |
 
 ### Whitening
-```markdown
 |   batch |   channels |   time_steps |   CUDA (ms) |   PyTorch (ms) |   NumPy (ms) | vs PyTorch   | vs NumPy   |
 |--------:|-----------:|-------------:|------------:|---------------:|-------------:|:-------------|:-----------|
 |       1 |         32 |        10000 |        1.04 |           1.19 |         1.6  | 1.1x         | 1.5x       |
@@ -54,7 +50,6 @@ Note : Full Batch Fair Comparison
 |      16 |         64 |        50000 |       24.69 |          24.92 |        11.44 | 1.0x         | 0.5x       |
 
 ### FastICA
-```markdown
 |   batch |   channels |   time_steps |   CUDA (ms) |   sklearn (ms) | vs sklearn   |
 |--------:|-----------:|-------------:|------------:|---------------:|:-------------|
 |       1 |         32 |        10000 |      279.02 |         647.97 | 2.3x         |
