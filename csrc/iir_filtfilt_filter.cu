@@ -187,7 +187,7 @@ torch::Tensor run_iir_filter_forward(
     // check data
     TORCH_CHECK(input.is_cuda(), "Inputs must be CUDA tensors");
     TORCH_CHECK(sfre.defined(), "Sampling frequency tensor must be specified");
-    TORCH_CHECK(sfre.dtype() == torch::kInt, "Sampling frequency must be int type");
+    TORCH_CHECK(sfre.dtype() == torch::kInt || sfre.is_floating_point(), "Sampling frequency must be either float or int type");
     TORCH_CHECK(cfre.defined(), "Cutoff frequency tensor must be specified");
     TORCH_CHECK(cfre.is_floating_point() || cfre.dtype() == torch::kInt, "Cutoff frequency must be either float or int type");
 
