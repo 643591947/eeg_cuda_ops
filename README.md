@@ -79,7 +79,7 @@ Follow these steps to set up the environment and build the CUDA extensions.
 
 1. Clone the Repository
 ```bash
-git clone [https://github.com/643591947/eeg_cuda_ops.git](https://github.com/643591947/eeg_cuda_ops.git)
+git clone https://github.com/643591947/eeg_cuda_ops.git
 cd eeg_cuda_ops
 ```
 
