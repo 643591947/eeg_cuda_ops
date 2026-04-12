@@ -40,6 +40,7 @@ FIR taps: 256, Cutoff: 1-40Hz
 [Vs PyTorch] Max Rel: 2.61072797e-04  Mean Rel: 3.47849010e-07
 
 ### EEG CUDA IIR filtfilt Verification Report
+#### Matrix
 Data shape: Batch 10 × Channels 64 × Time 1000
 Filter type: high, Cutoff: [1]Hz
 
@@ -48,3 +49,13 @@ Filter type: high, Cutoff: [1]Hz
 [Vs Exact Equivalent] Mean Abs Error: 2.04179813e-07
 
 [Vs Standard filtfilt] Max Abs Error (Boundary Effects Expected): 1.48602361e-02
+
+#### Norm
+Data shape: Batch 10 × Channels 62 × Time 111000
+Filter type: high, Cutoff: [1]Hz
+
+[Vs Exact Equivalent] Max Abs Error: 1.67968479e-04
+
+[Vs Exact Equivalent] Mean Abs Error: 1.65815782e-05
+
+[Vs Standard filtfilt] Max Abs Error (Boundary Effects Expected): 1.48599725e-02
