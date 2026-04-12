@@ -69,9 +69,9 @@ To achieve efficient GPU parallelism, the recursion is converted into a **state-
 
 Define the state vector:
 
-$
+$$
 S_{n-1} = \begin{bmatrix} y_{n-1} \\ y_{n-2} \\ 1 \end{bmatrix}
-$
+$$
 
 Construct the time-varying state transition matrix $M_n$ (with the input term embedded):
 
