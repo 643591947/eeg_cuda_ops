@@ -62,17 +62,15 @@ Note : Full Batch Fair Comparison
 See [numerical_verification.md](docs/numerical_verification.md) for verification reports.
 ---
 
+## Web UI demo
+![EEG CUDA Demo](assets/demo.gif)
+
 ## Requirements
 
 - Python 3.11
 - PyTorch 2.6.0+cu124 (with CUDA 12.4)
 - CUDA Toolkit 12.4 (matching the PyTorch build)
 - NVIDIA GPU with compute capability ≥ 7.0 (recommended)
-
-This extension was built and tested with:
-- PyTorch 2.6.0+cu124
-- Built using: `pip install -e . --no-build-isolation`
-
 
 ## 🛠 Installation & Setup
 Follow these steps to set up the environment and build the CUDA extensions.
