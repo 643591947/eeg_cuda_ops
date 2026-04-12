@@ -28,70 +28,105 @@
 * **Core Logic:** Maximizes non-Gaussianity using the Fixed-point iteration (Fixed-point algorithm).
 * **Orthogonalization:** Symmetric orthogonalization ($W = (WW^T)^{-1/2}W$) to prevent component convergence overlap.
 
-### 5. IIR Filtfilt
-Infinite Impulse Response (IIR) filters are traditionally computed sequentially, making them difficult to parallelize on GPUs. This project parallelizes the IIR filter computation by converting the standard difference equation into a **State-Space Matrix Representation** and leveraging **Parallel Prefix Product (Scan)** algorithms.
+### 5. Mathematical Principles of IIR Filters
 
-#### Standard Difference Equation
+The IIR filter is based on a **second-order Butterworth prototype** and is designed using the bilinear transform to create digital biquad filters, supporting low-pass, high-pass, band-pass, and band-stop filtering. The core computation is implemented using two equivalent approaches: the traditional Direct Form II and a state-space matrix-based parallel prefix product method.
 
-For a 2nd-order IIR filter (Biquad), the time-domain difference equation is given by:
+#### Analog Prototype and Digital Filter Design
 
-$$a_0 y_n + a_1 y_{n-1} + a_2 y_{n-2} = b_0 x_n + b_1 x_{n-1} + b_2 x_{n-2}$$
+Starting from the analog second-order Butterworth low-pass prototype:
 
-Rearranging to solve for the current output $y_n$:
+$$
+H(s) = \frac{1}{s^2 + \sqrt{2}\, s + 1}
+$$
 
-$$y_n = -\frac{a_1}{a_0} y_{n-1} - \frac{a_2}{a_0} y_{n-2} + \frac{1}{a_0} (b_0 x_n + b_1 x_{n-1} + b_2 x_{n-2})$$
+1. **Pre-warping**  
+   $$
+   \Omega = \tan\left(\pi \cdot \frac{f_c}{f_s}\right)
+   $$
 
-Let $u_n$ represent the aggregated input term at time $n$:
+2. **Bilinear Transform**  
+   Convert the analog transfer function to the digital domain to obtain the biquad coefficients $(b_0, b_1, b_2, a_1, a_2)$ (with $a_0 = 1$).
 
-$$u_n = \frac{1}{a_0} (b_0 x_n + b_1 x_{n-1} + b_2 x_{n-2})$$
+High-pass, band-pass, and band-stop filters are obtained by first applying analog frequency transformations to the low-pass prototype and then applying the bilinear transform to obtain the corresponding coefficients. This process is equivalent to SciPy's `signal.butter` + `bilinear`.
 
-Thus, the equation simplifies to:
+#### Traditional Recursive Form (Direct Form II)
 
-$$y_n = -\frac{a_1}{a_0} y_{n-1} - \frac{a_2}{a_0} y_{n-2} + u_n$$
+Once the coefficients are determined, the filter can be expressed by the following difference equations:
 
-#### State-Space Matrix Representation
+$$
+\begin{aligned}
+w[n] &= x[n] - a_1 w[n-1] - a_2 w[n-2] \\
+y[n] &= b_0 w[n] + b_1 w[n-1] + b_2 w[n-2]
+\end{aligned}
+$$
 
-To parallelize the recursive equation, we convert it into a linear matrix operation. We define a state vector $S_n$ and a state-transition matrix $M_n$. 
+In the CUDA kernel, each thread computes this recursion sequentially over time, suitable for moderate-scale parallelism.
 
-To incorporate the dynamic input $u_n$ using pure matrix multiplication, we use an **augmented matrix trick** by appending a constant `1` to our state vector.
+#### State-Space Matrix Representation (Parallelization Scheme)
 
-Let the state vector be:
+To achieve efficient GPU parallelism, the recursion is converted into a **state-space form** using an **augmented matrix trick**:
 
-$$S_{n-1} = \begin{bmatrix} y_{n-1} \\ y_{n-2} \\ 1 \end{bmatrix}$$
+Define the state vector:
 
-We can represent the transition from $S_{n-1}$ to $S_n$ as $S_n = M_n S_{n-1}$, where $M_n$ is:
+$$
+S_{n-1} = \begin{bmatrix} y_{n-1} \\ y_{n-2} \\ 1 \end{bmatrix}
+$$
 
-$$M_n = \begin{bmatrix} -\frac{a_1}{a_0} & -\frac{a_2}{a_0} & u_n \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
+Construct the time-varying state transition matrix $M_n$ (with the input term embedded):
 
-Multiplying $M_n$ by $S_{n-1}$ perfectly recovers our difference equation:
-* Row 1: $y_n = (-\frac{a_1}{a_0})y_{n-1} + (-\frac{a_2}{a_0})y_{n-2} + u_n \cdot 1$
-* Row 2: $y_{n-1} = 1 \cdot y_{n-1} + 0 \cdot y_{n-2} + 0 \cdot 1$
-* Row 3: $1 = 0 \cdot y_{n-1} + 0 \cdot y_{n-2} + 1 \cdot 1$
+$$
+M_n = \begin{bmatrix}
+-\frac{a_1}{a_0} & -\frac{a_2}{a_0} & u_n \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+$$
 
-#### Parallelization via Prefix Product
+where $u_n$ is the normalized input term:
 
-By unrolling the recursion, the state at time $n$ depends only on the initial state $S_{-1}$ and the product of all intermediate matrices:
+$$
+u_n = \frac{1}{a_0}(b_0 x_n + b_1 x_{n-1} + b_2 x_{n-2})
+$$
 
-$$S_n = M_n \cdot M_{n-1} \cdot M_{n-2} \dots M_0 \cdot S_{-1}$$
+The state update simplifies to matrix multiplication:
 
-Let $P_n$ be the accumulated prefix product of the matrices up to time $n$:
+$$
+S_n = M_n \, S_{n-1}
+$$
 
-$$P_n = \prod_{k=0}^{n} M_k = M_n \cdot M_{n-1} \dots M_0$$
+#### Parallel Prefix Product
 
-Since matrix multiplication is **associative** ($(A \cdot B) \cdot C = A \cdot (B \cdot C)$), we can compute $P_n$ for all $n$ simultaneously using a **Parallel Prefix Scan** algorithm (e.g., via NVIDIA Thrust). 
+The recursion is fully expanded as:
 
-Once $P_n$ is computed for all time steps, the final output $y_n$ can be extracted independently in parallel:
+$$
+S_n = M_n \cdot M_{n-1} \cdots M_0 \cdot S_{-1}
+$$
 
-$$S_n = P_n \cdot \begin{bmatrix} y_{-1} \\ y_{-2} \\ 1 \end{bmatrix}$$
+Define the prefix product matrix:
 
-Assuming zero initial conditions ($y_{-1} = 0, y_{-2} = 0$), $y_n$ is simply the element at the first row and third column of $P_n$.
+$$
+P_n = \prod_{k=0}^{n} M_k = M_n \cdot M_{n-1} \cdots M_0
+$$
+
+Since matrix multiplication is **associative**, the **Parallel Prefix Scan** algorithm can be used to compute all $P_n$ in $O(\log N)$ time.
+
+Under zero initial conditions ($y_{-1} = y_{-2} = 0$), the output $y_n$ can be directly extracted from the first row, third column element of $P_n$, enabling fully parallel computation.
 
 #### Zero-Phase Filtering (filtfilt)
 
-The matrix scan approach computes the **causal (forward) filter**. To achieve zero-phase distortion (identical to SciPy's `scipy.signal.filtfilt`), the filter is applied twice:
-1.  **Forward pass:** Compute $y_{forward}$ using the parallel matrix scan.
-2.  **Time reversal:** Reverse the time axis of $y_{forward}$.
-3.  **Backward pass:** Apply the same parallel filter on the reversed signal.
-4.  **Time reversal:** Reverse the output back to original chronological order.
+The method described above implements **causal forward filtering**. To achieve zero-phase filtering (consistent with `scipy.signal.filtfilt`), the following steps are performed:
 
-This approach achieves complete $O(N)$ sequential IIR filtering in highly parallel $O(\log N)$ GPU time bounds.
+1. Forward filtering: compute $y_{\text{forward}}$
+2. Time reversal
+3. Reverse filtering (apply prefix product again to the reversed signal)
+4. Time reversal again
+
+The resulting magnitude response is the square of the original filter's magnitude, and the phase is completely canceled to zero.
+
+#### Comparison of the Two Implementations
+
+- **Direct Form II**: Simple to implement, numerically stable, suitable for real-time or medium-length sequences.
+- **State-Space + Prefix Product**: Converts recursion into matrix multiplication, leveraging GPU parallel scan capabilities with a theoretical time complexity of $O(\log N)$, particularly suitable for high-throughput parallel processing of very long sequences.
+
+The two methods are mathematically equivalent and can be flexibly selected or combined based on specific requirements.
