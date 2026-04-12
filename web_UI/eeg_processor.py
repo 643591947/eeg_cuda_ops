@@ -51,6 +51,30 @@ def apply_iir_filter_cuda(data: np.ndarray, sfre_tensor: torch.Tensor,
     return filtered.cpu().numpy()
 
 
+# ==================== FastICA 函数 ====================
+def apply_fastica_cuda(data: np.ndarray, max_iter: int = 200, tol: float = 1e-4):
+    if data.ndim != 2:
+        raise ValueError(f"数据维度错误，期望 (n_channels, n_times)，实际为 {data.shape}")
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    x = torch.from_numpy(data).float().unsqueeze(0).to(device)
+
+    # 1. 去中心化
+    x_centered = eeg_cuda.centering(x)
+
+    # 2. ZCA 白化
+    x_whitened, w_whiten = eeg_cuda.whitening(x_centered)
+
+    # 3. ICA 迭代分析 (加入 max_iter 和 tol)
+    ica_signals, w_ica = eeg_cuda.fastica_iter(x_whitened, max_iter=max_iter, tol=tol)
+
+    # 降维处理
+    ica_signals_np = ica_signals.squeeze(0).cpu().numpy() if ica_signals.ndim == 3 else ica_signals.cpu().numpy()
+    w_whiten_np = w_whiten.squeeze(0).cpu().numpy() if w_whiten.ndim == 3 else w_whiten.cpu().numpy()
+    w_ica_np = w_ica.squeeze(0).cpu().numpy() if w_ica.ndim == 3 else w_ica.cpu().numpy()
+
+    return ica_signals_np, w_whiten_np, w_ica_np
+
 # ==================== 公共函数 ====================
 def get_data_segment(raw: mne.io.BaseRaw, picks: list, start_sec: float, duration_sec: float):
     sfreq = raw.info['sfreq']

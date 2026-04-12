@@ -9,7 +9,7 @@ import eeg_cuda
 # ==========================================
 # 1. 数据加载与预处理
 # ==========================================
-input_dir = r"data.bdf"
+input_dir = r""
 raw_data = mne.io.read_raw_bdf(input_dir, preload=True)
 data = raw_data.get_data().astype(np.float32)
 
@@ -43,6 +43,14 @@ print("="*60)
 print("[*] Running CUDA FastICA iterations...")
 S_cuda_tensor, W_cuda_tensor = eeg_cuda.fastica_iter(whitened_eeg, max_iter=200, tol=1e-4)
 S_cuda_np = S_cuda_tensor[0].cpu().numpy()
+
+# S = W * X  =>  X_rec = inv(W) * S
+W_inv = torch.inverse(W_cuda_tensor[0])
+X_recon = torch.mm(W_inv, S_cuda_tensor[0])
+
+# 计算重构误差 (L2范数)
+recon_error = torch.norm(whitened_eeg[0] - X_recon) / torch.norm(whitened_eeg[0])
+print(f"Reconstruction Error (L2): {recon_error.item():.2e}")
 
 # Run scikit-learn FastICA as CPU baseline
 print("[*] Running scikit-learn FastICA (CPU baseline)...")
