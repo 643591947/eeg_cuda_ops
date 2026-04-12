@@ -37,7 +37,7 @@ The IIR filter is based on a **second-order Butterworth prototype** and is desig
 Starting from the analog second-order Butterworth low-pass prototype:
 
 $$
-H(s) = \frac{1}{s^2 + \sqrt{2}\, s + 1}
+H(s) = \frac{1}{s^2 + \sqrt{2}\ s + 1}
 $$
 
 1. **Pre-warping**  
@@ -92,7 +92,7 @@ $$
 The state update simplifies to matrix multiplication:
 
 $$
-S_n = M_n \, S_{n-1}
+S_n = M_n \ S_{n-1}
 $$
 
 #### Parallel Prefix Product
