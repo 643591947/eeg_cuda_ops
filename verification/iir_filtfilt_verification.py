@@ -49,7 +49,7 @@ def get_biquad_coeffs(sfre, cfre, pass_type="high", bandstop=False):
 # ==========================================
 # 1. 数据加载与预处理
 # ==========================================
-input_dir = r"E:\bizq\脑电分析\EEG测试数据\Copy_20260130175721005\赵婷\赵婷_20260130_173432\1\1\data.bdf"
+input_dir = r""
 print(f"正在加载数据: {input_dir}")
 
 if not os.path.exists(input_dir) and input_dir != "":
@@ -92,7 +92,7 @@ print(f"IIR 系数: b={b_np}, a={a_np}")
 # ==========================================
 print("\nExecuting CUDA IIR filtfilt...")
 with torch.no_grad():
-    cuda_filtered = eeg_cuda.iir_filtfilt_norm(
+    cuda_filtered = eeg_cuda.iir_filtfilt_matrix(
         eeg_tensor,
         sfre_tensor,
         cfre_tensor,
